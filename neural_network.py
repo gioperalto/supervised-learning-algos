@@ -67,4 +67,4 @@ if __name__ == "__main__":
     )
     plot.add_plot(rwq_iter_counts, rwq_train_mse, 'training data')
     plot.add_plot(rwq_iter_counts, rwq_test_mse, 'testing data')
-    plot.save()
+    plot.save(top_limit=1.)

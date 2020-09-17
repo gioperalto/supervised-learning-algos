@@ -36,7 +36,9 @@ class Plotter:
         plt.axvline(x=x[i], label='{}={} ({})'.format(self.x_axis, x[i], label), color='g')
         plt.text(x=x[i]+x_offset, y=y_offset, s='{:.1f}'.format(min_mse))
 
-    def save(self, loc='best', framealpha=.8):
+    def save(self, loc='best', framealpha=.8, top_limit=None):
+        if top_limit is not None:
+            plt.ylim(top=top_limit)
         plt.xlabel(self.x_axis)
         plt.ylabel(self.y_axis)
         plt.title(self.name)

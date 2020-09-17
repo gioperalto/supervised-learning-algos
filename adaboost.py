@@ -1,5 +1,5 @@
 import numpy as np
-from utils import red_wine_quality, heart_failure_prediction, get_accuracy
+from utils import red_wine_quality, heart_failure_prediction, get_mse
 from plotter import Plotter
 from sklearn.ensemble import AdaBoostClassifier
 
@@ -28,32 +28,32 @@ if __name__ == "__main__":
     hfp_adas = create_adaboosts(hfp_x_train, hfp_y_train, n_estimators_set)
 
     # Get training/testing accuracy for Heart Failure Prediction
-    hfp_train_acc = get_accuracy(hfp_adas, hfp_x_train, hfp_y_train)
-    hfp_test_acc = get_accuracy(hfp_adas, hfp_x_test, hfp_y_test)
+    hfp_train_mse = get_mse(hfp_adas, hfp_x_train, hfp_y_train)
+    hfp_test_mse = get_mse(hfp_adas, hfp_x_test, hfp_y_test)
 
     # Generate graph for Heart Failure Prediction
     plot = Plotter(
         name='Heart Failure Prediction', 
         learner='adaboost', 
-        axes={ 'x': 'Number of estimators', 'y': 'Accuracy (%)' }
+        axes={ 'x': 'Number of estimators', 'y': 'Error' }
     )
-    plot.add_plot(n_estimators_set, hfp_train_acc, 'training data', 'None')
-    plot.add_plot(n_estimators_set, hfp_test_acc, 'testing data', 'None')
+    plot.add_plot(n_estimators_set, hfp_train_mse, 'training data', 'None')
+    plot.add_plot(n_estimators_set, hfp_test_mse, 'testing data', 'None')
     plot.save()
 
     # Create Red Wine Quality NNs
     rwq_adas = create_adaboosts(rwq_x_train, rwq_y_train, n_estimators_set)
 
     # Get training/testing accuracy for Red Wine Quality
-    rwq_train_acc = get_accuracy(rwq_adas, rwq_x_train, rwq_y_train)
-    rwq_test_acc = get_accuracy(rwq_adas, rwq_x_test, rwq_y_test)
+    rwq_train_mse = get_mse(rwq_adas, rwq_x_train, rwq_y_train)
+    rwq_test_mse = get_mse(rwq_adas, rwq_x_test, rwq_y_test)
 
      # Generate graph for Red Wine Quality
     plot = Plotter(
         name='Red Wine Quality', 
         learner='adaboost', 
-        axes={ 'x': 'Number of estimators', 'y': 'Accuracy (%)' }
+        axes={ 'x': 'Number of estimators', 'y': 'Error' }
     )
-    plot.add_plot(n_estimators_set, rwq_train_acc, 'training data', 'None')
-    plot.add_plot(n_estimators_set, rwq_test_acc, 'testing data', 'None')
+    plot.add_plot(n_estimators_set, rwq_train_mse, 'training data', 'None')
+    plot.add_plot(n_estimators_set, rwq_test_mse, 'testing data', 'None')
     plot.save()
