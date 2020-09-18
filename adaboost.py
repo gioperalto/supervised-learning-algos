@@ -1,19 +1,20 @@
 import numpy as np
-from utils import red_wine_quality, heart_failure_prediction, get_mse
+from utils import red_wine_quality, heart_failure_prediction, get_mse, scale_data
 from plotter import Plotter
 from sklearn.ensemble import AdaBoostClassifier
 
-def create_adaboost(x, y, n_estimators=100):
+def create_adaboost(x, y, n_estimators=100, lr=1.):
     return AdaBoostClassifier(
         n_estimators=n_estimators, 
+        learning_rate=lr,
         random_state=0
     ).fit(x, y.values.flatten())
 
-def create_adaboosts(x, y, n_estimators=100):
+def create_adaboosts(x, y, n_estimators=100, lr=1.):
     boosts = []
 
     for i in n_estimators:
-        boosts.append(create_adaboost(x, y, i))
+        boosts.append(create_adaboost(x, y, i, lr))
 
     return boosts
 
@@ -24,12 +25,16 @@ if __name__ == "__main__":
 
     n_estimators_set = np.arange(1,101, 1, dtype=int)
 
+    # Scale data
+    hfp_x_train, hfp_x_test = scale_data(hfp_x_train, hfp_x_test)
+    rwq_x_train, rwq_x_test = scale_data(rwq_x_train, rwq_x_test)
+
     # Create Heart Failure Prediction NNs
-    hfp_adas = create_adaboosts(hfp_x_train, hfp_y_train, n_estimators_set)
+    hfp_adas_l2 = create_adaboosts(hfp_x_train, hfp_y_train, n_estimators_set, .1)
 
     # Get training/testing accuracy for Heart Failure Prediction
-    hfp_train_mse = get_mse(hfp_adas, hfp_x_train, hfp_y_train)
-    hfp_test_mse = get_mse(hfp_adas, hfp_x_test, hfp_y_test)
+    hfp_train_mse_l2 = get_mse(hfp_adas_l2, hfp_x_train, hfp_y_train)
+    hfp_test_mse_l2 = get_mse(hfp_adas_l2, hfp_x_test, hfp_y_test)
 
     # Generate graph for Heart Failure Prediction
     plot = Plotter(
@@ -37,23 +42,23 @@ if __name__ == "__main__":
         learner='adaboost', 
         axes={ 'x': 'Number of estimators', 'y': 'Error' }
     )
-    plot.add_plot(n_estimators_set, hfp_train_mse, 'training data', 'None')
-    plot.add_plot(n_estimators_set, hfp_test_mse, 'testing data', 'None')
+    plot.add_plot(n_estimators_set, hfp_train_mse_l2, 'training data (lr=0.1)', 'None')
+    plot.add_plot(n_estimators_set, hfp_test_mse_l2, 'testing data (lr=0.1)', 'None')
     plot.save()
 
-    # Create Red Wine Quality NNs
-    rwq_adas = create_adaboosts(rwq_x_train, rwq_y_train, n_estimators_set)
+    # Create Heart Failure Prediction NNs
+    rwq_adas_l2 = create_adaboosts(rwq_x_train, rwq_y_train, n_estimators_set, .1)
 
-    # Get training/testing accuracy for Red Wine Quality
-    rwq_train_mse = get_mse(rwq_adas, rwq_x_train, rwq_y_train)
-    rwq_test_mse = get_mse(rwq_adas, rwq_x_test, rwq_y_test)
+    # Get training/testing accuracy for Heart Failure Prediction
+    rwq_train_mse_l2 = get_mse(rwq_adas_l2, rwq_x_train, rwq_y_train)
+    rwq_test_mse_l2 = get_mse(rwq_adas_l2, rwq_x_test, rwq_y_test)
 
-     # Generate graph for Red Wine Quality
+    # Generate graph for Red Wine Quality
     plot = Plotter(
         name='Red Wine Quality', 
         learner='adaboost', 
         axes={ 'x': 'Number of estimators', 'y': 'Error' }
     )
-    plot.add_plot(n_estimators_set, rwq_train_mse, 'training data', 'None')
-    plot.add_plot(n_estimators_set, rwq_test_mse, 'testing data', 'None')
+    plot.add_plot(n_estimators_set, rwq_train_mse_l2, 'training data (lr=0.1)', 'None')
+    plot.add_plot(n_estimators_set, rwq_test_mse_l2, 'testing data (lr=0.1)', 'None')
     plot.save()
