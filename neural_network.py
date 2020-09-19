@@ -16,6 +16,7 @@ def create_nns(x, y, iter_counts, hidden_layer_sizes=(100,)):
     nns = []
 
     for count in iter_counts:
+        print('NN {}'.format(count))
         nn = create_nn(x=x, y=y, max_iter=count, hidden_layer_sizes=hidden_layer_sizes)
         nns.append(nn)
 
@@ -30,13 +31,16 @@ if __name__ == "__main__":
     hfp_x_train, hfp_x_test = scale_data(hfp_x_train, hfp_x_test)
     rwq_x_train, rwq_x_test = scale_data(rwq_x_train, rwq_x_test)
 
+    # Hidden layer sizes
+    hfp_hidden_layer_sizes = (hfp_x_train.shape[1]**2, hfp_x_train.shape[1], hfp_x_train.shape[1]**2)
+    rwq_hidden_layer_sizes = (rwq_x_train.shape[1]**2, rwq_x_train.shape[1], rwq_x_train.shape[1]**2)
+
     # Hyperparameters
-    hidden_layer_sizes = (100, 50, 25)
-    hfp_iter_counts = np.arange(1, 5251, 250, dtype=int)
-    rwq_iter_counts = np.arange(1, 2251, 250, dtype=int)
+    hfp_iter_counts = np.arange(1, 3100, 100, dtype=int)
+    rwq_iter_counts = np.arange(1, 1100, 50, dtype=int)
 
     # Create Heart Failure Prediction NNs
-    hfp_nns  = create_nns(hfp_x_train, hfp_y_train, hfp_iter_counts, hidden_layer_sizes)
+    hfp_nns  = create_nns(hfp_x_train, hfp_y_train, hfp_iter_counts, hfp_hidden_layer_sizes)
 
     # Get training/testing accuracy for Heart Failure Prediction
     hfp_train_mse = get_mse(hfp_nns, hfp_x_train, hfp_y_train)
@@ -48,12 +52,12 @@ if __name__ == "__main__":
         learner='neural-network', 
         axes={ 'x': 'Number of weight updates', 'y': 'Error' }
     )
-    plot.add_plot(hfp_iter_counts, hfp_train_mse, 'training data')
-    plot.add_plot(hfp_iter_counts, hfp_test_mse, 'testing data')
+    plot.add_plot(hfp_iter_counts, hfp_train_mse, 'training data', 'None')
+    plot.add_plot(hfp_iter_counts, hfp_test_mse, 'testing data', 'None')
     plot.save()
 
     # Create Red Wine Quality NNs
-    rwq_nns = create_nns(rwq_x_train, rwq_y_train, rwq_iter_counts, hidden_layer_sizes)
+    rwq_nns = create_nns(rwq_x_train, rwq_y_train, rwq_iter_counts, rwq_hidden_layer_sizes)
 
     # Get training/testing accuracy for Red Wine Quality
     rwq_train_mse = get_mse(rwq_nns, rwq_x_train, rwq_y_train)
@@ -65,6 +69,6 @@ if __name__ == "__main__":
         learner='neural-network',
         axes={ 'x': 'Number of weight updates', 'y': 'Error' }
     )
-    plot.add_plot(rwq_iter_counts, rwq_train_mse, 'training data')
-    plot.add_plot(rwq_iter_counts, rwq_test_mse, 'testing data')
+    plot.add_plot(rwq_iter_counts, rwq_train_mse, 'training data', 'None')
+    plot.add_plot(rwq_iter_counts, rwq_test_mse, 'testing data', 'None')
     plot.save(top_limit=1.)
