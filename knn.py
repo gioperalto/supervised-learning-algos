@@ -2,7 +2,7 @@ import numpy as np
 from plotter import Plotter
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
-from utils import red_wine_quality, heart_failure_prediction, get_mse, scale_data
+from utils import red_wine_quality, heart_failure_prediction, get_mse, scale_data, benchmarks
 
 def create_knn(x, y, n_neighbors=5):
     return KNeighborsClassifier(n_neighbors=n_neighbors).fit(x, y.values.flatten())
@@ -14,6 +14,30 @@ def create_knns(x, y, neighbors):
         knns.append(create_knn(x, y, n))
 
     return knns
+
+def generate_graphs_hfp(hfp_neighbors, hfp_train_mse, hfp_test_mse):
+    # Generate graph for Heart Failure Prediction
+    plot = Plotter(
+        name='Heart Failure Prediction', 
+        learner='knn', 
+        axes={ 'x': 'n_neighbors', 'y': 'Error' }
+    )
+    plot.add_plot(hfp_neighbors, hfp_train_mse, 'training data', 'None')
+    plot.add_plot(hfp_neighbors, hfp_test_mse, 'testing data', 'None')
+    plot.find_min_int(hfp_neighbors, hfp_test_mse, 'testing', top=False)
+    plot.save()
+
+def generate_graphs_rwq(rwq_neighbors, rwq_train_mse, rwq_test_mse):
+    # Generate graph for Red Wine Quality
+    plot = Plotter(
+        name='Red Wine Quality', 
+        learner='knn', 
+        axes={ 'x': 'n_neighbors', 'y': 'Error' }
+    )
+    plot.add_plot(rwq_neighbors, rwq_train_mse, 'training data', 'None')
+    plot.add_plot(rwq_neighbors, rwq_test_mse, 'testing data', 'None')
+    plot.find_min_int(rwq_neighbors, rwq_test_mse, 'testing')
+    plot.save()
 
 if __name__ == "__main__":
     # Split testing/training data and create trees
@@ -34,31 +58,17 @@ if __name__ == "__main__":
     hfp_train_mse = get_mse(hfp_knns, hfp_x_train, hfp_y_train)
     hfp_test_mse = get_mse(hfp_knns, hfp_x_test, hfp_y_test)
 
-    # Generate graph for Heart Failure Prediction
-    plot = Plotter(
-        name='Heart Failure Prediction', 
-        learner='knn', 
-        axes={ 'x': 'n_neighbors', 'y': 'Error' }
-    )
-    plot.add_plot(hfp_neighbors, hfp_train_mse, 'training data', 'None')
-    plot.add_plot(hfp_neighbors, hfp_test_mse, 'testing data', 'None')
-    plot.find_min_int(hfp_neighbors, hfp_test_mse, 'testing', top=False)
-    plot.save()
+    generate_graphs_hfp(hfp_neighbors, hfp_train_mse, hfp_test_mse)
+    print('\nHeart Failure Prediction - Benchmarks (KNN):')
+    benchmarks(hfp_x_train, hfp_y_train, hfp_x_test, hfp_y_test, hfp_neighbors, hfp_test_mse, create_knn)
 
-    # Create Red Wine Quality KNNs
+    # # Create Red Wine Quality KNNs
     rwq_knns = create_knns(rwq_x_train, rwq_y_train, rwq_neighbors)
 
     # Get training/testing accuracy for Red Wine Quality
     rwq_train_mse = get_mse(rwq_knns, rwq_x_train, rwq_y_train)
     rwq_test_mse = get_mse(rwq_knns, rwq_x_test, rwq_y_test)
 
-    # Generate graph for Red Wine Quality
-    plot = Plotter(
-        name='Red Wine Quality', 
-        learner='knn', 
-        axes={ 'x': 'n_neighbors', 'y': 'Error' }
-    )
-    plot.add_plot(rwq_neighbors, rwq_train_mse, 'training data', 'None')
-    plot.add_plot(rwq_neighbors, rwq_test_mse, 'testing data', 'None')
-    plot.find_min_int(rwq_neighbors, rwq_test_mse, 'testing')
-    plot.save()
+    generate_graphs_rwq(rwq_neighbors, rwq_train_mse, rwq_test_mse)
+    print('\nRed Wine Quality - Benchmarks (KNN):')
+    benchmarks(rwq_x_train, rwq_y_train, rwq_x_test, rwq_y_test, rwq_neighbors, rwq_test_mse, create_knn)
