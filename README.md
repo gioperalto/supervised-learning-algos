@@ -1,6 +1,5 @@
 # Supervised Learning Assignment - Giovanni Peralto
-
-## Code was written in Python 3.x. Python/pip is needed to run the program.
+Code was written in Python 3.x. Python/pip is needed to run the program.
 
 ### Instructions:
 
