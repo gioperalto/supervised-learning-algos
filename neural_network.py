@@ -34,25 +34,25 @@ if __name__ == "__main__":
     hfp_iter_counts = np.arange(1, 3100, 100, dtype=int)
     rwq_iter_counts = np.arange(1, 1100, 50, dtype=int)
 
-    # # Create Heart Failure Prediction NNs
-    # hfp_nns  = create_nns(hfp_x_train, hfp_y_train, hfp_iter_counts)
+    # Create Heart Failure Prediction NNs
+    hfp_nns  = create_nns(hfp_x_train, hfp_y_train, hfp_iter_counts)
 
-    # # Get training/testing accuracy for Heart Failure Prediction
-    # hfp_train_mse = get_mse(hfp_nns, hfp_x_train, hfp_y_train)
-    # hfp_test_mse = get_mse(hfp_nns, hfp_x_test, hfp_y_test)
+    # Get training/testing accuracy for Heart Failure Prediction
+    hfp_train_mse = get_mse(hfp_nns, hfp_x_train, hfp_y_train)
+    hfp_test_mse = get_mse(hfp_nns, hfp_x_test, hfp_y_test)
 
-    # print('\nHeart Failure Prediction - Benchmarks (NN):')
-    # benchmarks(hfp_x_train, hfp_y_train, hfp_x_test, hfp_y_test, hfp_iter_counts, hfp_test_mse, create_nn, count=100)
+    print('\nHeart Failure Prediction - Benchmarks (NN):')
+    benchmarks(hfp_x_train, hfp_y_train, hfp_x_test, hfp_y_test, hfp_iter_counts, hfp_test_mse, create_nn, count=100)
 
-    # # Generate graph for Heart Failure Prediction
-    # plot = Plotter(
-    #     name='Heart Failure Prediction', 
-    #     learner='neural-network', 
-    #     axes={ 'x': 'Number of weight updates', 'y': 'Error' }
-    # )
-    # plot.add_plot(hfp_iter_counts, hfp_train_mse, 'training data', 'None')
-    # plot.add_plot(hfp_iter_counts, hfp_test_mse, 'testing data', 'None')
-    # plot.save()
+    # Generate graph for Heart Failure Prediction
+    plot = Plotter(
+        name='Heart Failure Prediction', 
+        learner='neural-network', 
+        axes={ 'x': 'Number of weight updates', 'y': 'Error' }
+    )
+    plot.add_plot(hfp_iter_counts, hfp_train_mse, 'training data', 'None')
+    plot.add_plot(hfp_iter_counts, hfp_test_mse, 'testing data', 'None')
+    plot.save()
 
     # Create Red Wine Quality NNs
     rwq_nns = create_nns(rwq_x_train, rwq_y_train, rwq_iter_counts)
